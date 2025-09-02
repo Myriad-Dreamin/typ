@@ -1,6 +1,6 @@
 
 #import "../packages/zebraw.typ": *
-#import "@preview/shiroa:0.2.3": is-web-target, is-pdf-target, plain-text, is-html-target, templates
+#import "@preview/shiroa:0.2.3": is-html-target, is-pdf-target, is-web-target, plain-text, templates
 #import templates: *
 #import "mod.typ": *
 #import "theme.typ": *
@@ -247,7 +247,11 @@
 ) = {
   let is-same-kind = build-kind == kind
 
-  show: it => if is-same-kind {
+  // To ensure that we can nest any pages together with applying the template repeatedly.
+  let nest-level = state("nest-level", 0)
+  let is-root-level() = is-same-kind and sys-is-html-target and nest-level.get() == 0
+
+  show: it => context if is-same-kind and nest-level.get() == 0 {
     // set basic document metadata
     set document(
       author: ("Myriad-Dreamin",),
@@ -355,7 +359,7 @@
     )) <frontmatter>
   ]
 
-  context if show-outline and is-same-kind and sys-is-html-target {
+  context if show-outline and is-root-level() {
     if query(heading).len() == 0 {
       return
     }
@@ -382,13 +386,15 @@
     html.elem("hr")
   }
 
+  nest-level.update(it => it + 1)
   if kind == "monthly" {
     archive-creator(archive-indices, body)
   } else {
     body
   }
+  nest-level.update(it => it - 1)
 
-  context if is-same-kind and sys-is-html-target {
+  context if is-root-level() {
     query(footnote)
       .enumerate()
       .map(((idx, it)) => {
