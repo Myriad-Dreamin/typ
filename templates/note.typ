@@ -74,6 +74,13 @@
       body {
         margin: 4em;
       }
+      figure {
+        display: flex;
+        justify-content: center;
+      }
+      figure > div {
+        width: fit-content;
+      }
       ```
       ```js
       // dark theme
