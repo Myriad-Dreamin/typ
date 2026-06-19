@@ -16,6 +16,7 @@
 // #let default-kind = "monthly"
 
 #let build-kind = sys.inputs.at("build-kind", default: default-kind)
+#let math-render = sys.inputs.at("math-render", default: "mathml")
 
 #let text-fonts = (
   "Libertinus Serif",
@@ -78,6 +79,41 @@
 
 #let equation-rules(body) = {
   show math.equation: set text(weight: 400)
+  body
+}
+
+#let svg-equation-rules(body) = {
+  show math.equation: set text(weight: 400)
+  show math.equation.where(block: true): it => context if shiroa-sys-target() == "html" {
+    theme-frame(
+      tag: "div",
+      theme => {
+        set text(fill: theme.main-color)
+        html.elem(
+          "p",
+          html.frame(it),
+          attrs: ("class": "block-equation", "role": "math"),
+        )
+      },
+    )
+  } else {
+    it
+  }
+  show math.equation.where(block: false): it => context if shiroa-sys-target() == "html" {
+    theme-frame(
+      tag: "span",
+      theme => {
+        set text(fill: theme.main-color)
+        html.elem(
+          "span",
+          html.frame(it),
+          attrs: (class: "inline-equation"),
+        )
+      },
+    )
+  } else {
+    it
+  }
   body
 }
 
@@ -239,7 +275,7 @@
       region: region,
     )
     // math setting
-    show: equation-rules
+    show: if math-render == "svg" { svg-equation-rules } else { equation-rules }
     // code block setting
     show: code-block-rules
     // visualization setting
