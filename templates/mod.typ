@@ -42,6 +42,9 @@
 }
 
 #let blog-tags = (
+  finance: "Finance",
+  math: "Math",
+  poem: "Poem",
   programming: "Programming",
   software: "Software",
   network: "Network",

@@ -1,6 +1,6 @@
 
 #import "../packages/zebraw.typ": *
-#import "@preview/shiroa:0.2.3": is-web-target, is-pdf-target, plain-text, is-html-target, templates
+#import "@preview/shiroa:0.2.3": is-html-target, is-pdf-target, is-web-target, plain-text, templates
 #import templates: *
 #import "mod.typ": *
 #import "theme.typ": *
@@ -221,7 +221,34 @@
   show image: it => context if shiroa-sys-target() == "paged" {
     it
   } else {
-    html.elem("img", attrs: (src: resolve(it.source)))
+    // >> shiroa 0.3.0
+    let data-url(mime, src) = {
+      import "@preview/based:0.2.0": base64
+      "data:" + mime + ";base64," + base64.encode(src)
+    }
+    if type(it.source) == bytes {
+      let mime = if it.source.slice(0, 4) == bytes((0x89, 0x50, 0x4E, 0x47)) {
+        "image/png"
+      } else if it.source.slice(0, 3) == bytes((0xFF, 0xD8, 0xFF)) {
+        "image/jpeg"
+      } else if (
+        it.source.slice(0, 6) == bytes((0x47, 0x49, 0x46, 0x38, 0x39, 0x61))
+          or it.source.slice(0, 6) == bytes((0x47, 0x49, 0x46, 0x38, 0x37, 0x61))
+      ) {
+        "image/gif"
+        // svg starts with `<?xml` or `<svg`
+      } else if (
+        it.source.slice(0, 5) == bytes((0x3C, 0x3F, 0x78, 0x6D, 0x6C)) // `<?xml`
+          or it.source.slice(0, 4) == bytes((0x3C, 0x73, 0x76, 0x67)) // `<svg`
+      ) {
+        "image/svg+xml"
+      } else {
+        "application/octet-stream"
+      }
+      html.elem("img", attrs: (src: data-url(mime, it.source)))
+    } else {
+      html.elem("img", attrs: (src: resolve(it.source)))
+    }
   }
 
   body
