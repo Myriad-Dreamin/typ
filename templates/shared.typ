@@ -293,17 +293,6 @@
     // visualization setting
     show: visual-rules
 
-    show: it => if sys-is-html-target {
-      show footnote: it => context {
-        let num = counter(footnote).get().at(0)
-        link(label("footnote-" + str(num)), super(str(num)))
-      }
-
-      it
-    } else {
-      it
-    }
-
     // Main body.
     set par(justify: true)
     it
@@ -413,20 +402,5 @@
     archive-creator(archive-indices, body)
   } else {
     body
-  }
-
-  context if is-same-kind and sys-is-html-target {
-    query(footnote)
-      .enumerate()
-      .map(((idx, it)) => {
-        enum.item[
-          #html.elem(
-            "div",
-            attrs: ("data-typst-label": "footnote-" + str(idx + 1)),
-            it.body,
-          )
-        ]
-      })
-      .join()
   }
 }
