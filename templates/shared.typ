@@ -5,20 +5,12 @@
 #import "mod.typ": *
 #import "theme.typ": *
 
-// Settings
-// todo: load from env or config?
-#let use-mathyml = true
-
-#import "../packages/mathyml.typ": prelude
-#import "empty.typ" as _empty
-#import if use-mathyml { prelude } else { _empty }: *
-
 // Metadata
 #let is-html-target = is-html-target()
 #let is-pdf-target = is-pdf-target()
 #let is-web-target = is-web-target() or sys-is-html-target
 #let is-md-target = target == "md"
-#let sys-is-html-target = ("target" in dictionary(std))
+#let sys-is-html-target = ("html" in dictionary(std))
 
 #let default-kind = "post"
 // #let default-kind = "monthly"
@@ -44,11 +36,6 @@
 // ,
 #let heading-sizes = (22pt, 18pt, 14pt, 12pt, main-size)
 #let list-indent = 0.5em
-
-/// Creates an embedded block typst frame.
-#let div-frame(content, attrs: (:), tag: "div") = html.elem(tag, html.frame(content), attrs: attrs)
-#let span-frame = div-frame.with(tag: "span")
-#let p-frame = div-frame.with(tag: "p")
 
 // defaults
 #let (
@@ -91,41 +78,6 @@
 
 #let equation-rules(body) = {
   show math.equation: set text(weight: 400)
-  show math.equation.where(block: true): it => context if shiroa-sys-target() == "html" {
-    theme-frame(
-      tag: "div",
-      theme => {
-        set text(fill: theme.main-color)
-        p-frame(attrs: ("class": "block-equation", "role": "math"), it)
-      },
-    )
-  } else {
-    it
-  }
-  show math.equation.where(block: false): it => context if shiroa-sys-target() == "html" {
-    theme-frame(
-      tag: "span",
-      theme => {
-        set text(fill: theme.main-color)
-        span-frame(attrs: (class: "inline-equation"), it)
-      },
-    )
-  } else {
-    it
-  }
-  body
-}
-
-// https://codeberg.org/akida/mathyml
-#let mathyml-equation-rules(body) = {
-  import "../packages/mathyml.typ": try-to-mathml
-
-  // math rules
-  show math.equation: set text(weight: 500)
-  // show math.equation: to-mathml
-  show math.equation: try-to-mathml
-
-
   body
 }
 
@@ -287,7 +239,7 @@
       region: region,
     )
     // math setting
-    show: if use-mathyml { mathyml-equation-rules } else { equation-rules }
+    show: equation-rules
     // code block setting
     show: code-block-rules
     // visualization setting

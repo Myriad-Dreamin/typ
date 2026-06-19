@@ -1,10 +1,10 @@
 #import "@preview/cmarker:0.1.5"
-#import "@preview/mitex:0.2.5": mitex
-#import "blog.typ": markup-rules, mathyml-equation-rules, code-block-rules, plain-text
+#import "@preview/mitex:0.2.7": mitex
+#import "blog.typ": markup-rules, equation-rules, code-block-rules, plain-text
 // markup setting
 #show: markup-rules
 // math setting
-#show: mathyml-equation-rules
+#show: equation-rules
 // code block setting
 #show: code-block-rules
 #show raw.where(lang: "md-render"): it => cmarker.render(

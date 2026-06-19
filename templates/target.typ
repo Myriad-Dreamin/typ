@@ -1,2 +1,2 @@
 
-#let sys-is-html-target = ("target" in dictionary(std))
+#let sys-is-html-target = ("html" in dictionary(std))
