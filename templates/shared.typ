@@ -38,6 +38,11 @@
 #let heading-sizes = (22pt, 18pt, 14pt, 12pt, main-size)
 #let list-indent = 0.5em
 
+/// Creates an embedded block typst frame.
+#let div-frame(content, attrs: (:), tag: "div") = html.elem(tag, html.frame(content), attrs: attrs)
+#let span-frame = div-frame.with(tag: "span")
+#let p-frame = div-frame.with(tag: "p")
+
 // defaults
 #let (
   style: theme-style,
@@ -89,11 +94,7 @@
       tag: "div",
       theme => {
         set text(fill: theme.main-color)
-        html.elem(
-          "p",
-          html.frame(it),
-          attrs: ("class": "block-equation", "role": "math"),
-        )
+        p-frame(attrs: ("class": "block-equation", "role": "math"), it)
       },
     )
   } else {
@@ -104,11 +105,7 @@
       tag: "span",
       theme => {
         set text(fill: theme.main-color)
-        html.elem(
-          "span",
-          html.frame(it),
-          attrs: (class: "inline-equation"),
-        )
+        span-frame(attrs: (class: "inline-equation"), it)
       },
     )
   } else {
