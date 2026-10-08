@@ -2,8 +2,6 @@
 
 - [packages](./packages): Packages for Typst
 - [templates](./templates): Templates for Typst
-- [examples](./examples): Examples
-- [tests](./tests): Examples
 
 ## Code Conventions
 
@@ -11,7 +9,7 @@
 
 ## Dependency Management
 
-The external dependencies could be managed through creating modules in `pacakges`. For example, if you would like to use `zebraw` package. You could create a module in `packages/zebraw.typ`:
+The external dependencies could be managed through creating modules in `packages`. For example, if you would like to use `zebraw` package. You could create a module in `packages/zebraw.typ`:
 
 ```typ
 #import "@preview/zebraw.typ:0.5.4": zebraw-init, zebraw
